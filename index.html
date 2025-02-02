@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualizador de Armonía Musical</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    h1 {
+      color: #333;
+    }
+    .note-button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      transition: background-color 0.3s;
+    }
+    .note-button:hover {
+      background-color: #45a049;
+    }
+    .chord {
+      margin: 10px 0;
+      font-size: 18px;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      display: inline-block;
+      text-align: left;
+    }
+    #notes-container {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Visualizador de Armonía Musical</h1>
+  <p>Selecciona una nota para ver sus posibles acordes:</p>
+  <div id="notes-container"></div>
+  <div id="result"></div>
+
+  <script>
+    // Definición de las notas en la escala cromática
+    const notas = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
+    // Fórmulas de los acordes en términos de intervalos (en semitonos)
+    const acordes = {
+      "Mayor": [0, 4, 7],
+      "Menor": [0, 3, 7],
+      "Disminuido": [0, 3, 6],
+      "Aumentado con 7ma": [0, 4, 8, 10] // Fórmula para 7#5: tónica, tercera mayor, quinta aumentada y séptima menor
+    };
+
+    // Función para crear los botones de las notas
+    function crearBotones() {
+      const container = document.getElementById('notes-container');
+      notas.forEach(nota => {
+        const btn = document.createElement('button');
+        btn.className = 'note-button';
+        btn.textContent = nota;
+        btn.addEventListener('click', () => mostrarAcordes(nota));
+        container.appendChild(btn);
+      });
+    }
+
+    // Función que muestra los acordes correspondientes a la nota seleccionada
+    function mostrarAcordes(nota) {
+      const indiceBase = notas.indexOf(nota);
+      let html = `<h2>Acordes para la nota ${nota}</h2>`;
+      
+      for (const [tipo, intervalos] of Object.entries(acordes)) {
+        // Para cada acorde se calcula cada nota sumando el intervalo y aplicando el módulo para no salir del arreglo.
+        const acordeNotas = intervalos.map(intervalo => notas[(indiceBase + intervalo) % notas.length]);
+        html += `<div class="chord"><strong>${tipo}:</strong> ${acordeNotas.join(', ')}</div>`;
+      }
+      
+      document.getElementById('result').innerHTML = html;
+    }
+
+    // Inicializamos la app creando los botones
+    crearBotones();
+  </script>
+</body>
+</html>
